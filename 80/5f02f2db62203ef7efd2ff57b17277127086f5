@@ -1,0 +1,35 @@
+app/src/main/java/com/mplayerx/ui/browser/BrowserScreen.kt
+  s_d430575d350ffa::t_6cc045a808490e 70-74
+  s_d430575d350ffa::t_619d49f3064598 57
+  s_d430575d350ffa::t_b0519bdd1cd94c 87
+app/src/main/java/com/mplayerx/settings/SettingsRepository.kt
+  s_d430575d350ffa::t_856f0272823714 22
+app/src/main/java/com/mplayerx/MainActivity.kt
+  s_d430575d350ffa::t_b449780f150c4f 65-69,73-80,83
+app/src/main/java/com/mplayerx/playback/PlayerState.kt
+  s_d430575d350ffa::t_f1198eac684401 20-21
+app/src/main/java/com/mplayerx/playback/ExoPlayerEngine.kt
+  s_d430575d350ffa::t_ee80c716c31468 75
+app/src/main/java/com/mplayerx/ui/home/HomeScreen.kt
+  s_d430575d350ffa::t_d0eeab7fa45e01 50
+  s_d430575d350ffa::t_7ec3a008c01bdb 104,110
+app/src/main/java/com/mplayerx/ui/player/PlayerScreen.kt
+  s_d430575d350ffa::t_994091f0f1f24d 161-174
+  s_d430575d350ffa::t_80a7d155216d50 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "805f02f2db62203ef7efd2ff57b17277127086f5",
+  "prompts": {},
+  "sessions": {
+    "s_d430575d350ffa": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f57a0ad47ffesBRzucqW7KJ6hB",
+        "model": "unknown"
+      },
+      "human_author": "Vinay Adiga <vinay.adiga@quabyt.com>"
+    }
+  }
+}
