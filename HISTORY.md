@@ -12,3 +12,4 @@ Newest first. One line per work item: date, outcome, commit.
 - 2026-09-16: Folder drill-down (home folders open their videos) + auto-rotate from video aspect, on by default (805f02f)
 - 2026-09-16: Tap toggles controls; seekbar seeks on release, fixes AV1 scrub stall (6266382)
 - 2026-09-16: AMOLED dark theme, true-black surfaces + amber accent (be00e77)
+- 2026-09-16: Released v0.1.2-mvp (AMOLED theme APK)
