@@ -1,0 +1,84 @@
+.gitignore
+  h_60a243ca3587ba 1-6
+ARCHITECTURE.md
+  h_60a243ca3587ba 1-28
+"Android Video Player — Initial Requirements.md"
+  h_60a243ca3587ba 1-1073
+DEVELOPMENT.md
+  h_60a243ca3587ba 1-27
+TODO.md
+  h_60a243ca3587ba 1-10
+app/build.gradle.kts
+  h_60a243ca3587ba 1-79
+app/proguard-rules.pro
+  h_60a243ca3587ba 1
+app/src/main/AndroidManifest.xml
+  h_60a243ca3587ba 1-58
+app/src/main/java/com/mplayerx/MPlayerXApp.kt
+  h_60a243ca3587ba 1-53
+app/src/main/java/com/mplayerx/MainActivity.kt
+  h_60a243ca3587ba 1-145
+app/src/main/java/com/mplayerx/database/AppDatabase.kt
+  h_60a243ca3587ba 1-21
+app/src/main/java/com/mplayerx/database/PlaybackHistory.kt
+  h_60a243ca3587ba 1-33
+app/src/main/java/com/mplayerx/media/MediaItem.kt
+  h_60a243ca3587ba 1-15
+app/src/main/java/com/mplayerx/media/MediaRepository.kt
+  h_60a243ca3587ba 1-17
+app/src/main/java/com/mplayerx/media/MediaScanner.kt
+  h_60a243ca3587ba 1-61
+app/src/main/java/com/mplayerx/playback/ExoPlayerEngine.kt
+  h_60a243ca3587ba 1-253
+app/src/main/java/com/mplayerx/playback/MpvPlayerEngine.kt
+  h_60a243ca3587ba 1-40
+app/src/main/java/com/mplayerx/playback/PlaybackService.kt
+  h_60a243ca3587ba 1-24
+app/src/main/java/com/mplayerx/playback/PlayerController.kt
+  h_60a243ca3587ba 1-37
+app/src/main/java/com/mplayerx/playback/PlayerEngine.kt
+  h_60a243ca3587ba 1-50
+app/src/main/java/com/mplayerx/playback/PlayerState.kt
+  h_60a243ca3587ba 1-20
+app/src/main/java/com/mplayerx/settings/SettingsRepository.kt
+  h_60a243ca3587ba 1-57
+app/src/main/java/com/mplayerx/ui/browser/BrowserScreen.kt
+  h_60a243ca3587ba 1-155
+app/src/main/java/com/mplayerx/ui/home/HomeScreen.kt
+  h_60a243ca3587ba 1-148
+app/src/main/java/com/mplayerx/ui/player/PlayerScreen.kt
+  h_60a243ca3587ba 1-440
+app/src/main/java/com/mplayerx/ui/settings/SettingsScreen.kt
+  h_60a243ca3587ba 1-111
+app/src/main/java/com/mplayerx/ui/theme/Theme.kt
+  h_60a243ca3587ba 1-20
+app/src/main/java/com/mplayerx/utils/Format.kt
+  h_60a243ca3587ba 1-30
+app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+  h_60a243ca3587ba 1-6
+app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+  h_60a243ca3587ba 1-6
+app/src/main/res/values/strings.xml
+  h_60a243ca3587ba 1-3
+app/src/main/res/values/themes.xml
+  h_60a243ca3587ba 1-7
+build.gradle.kts
+  h_60a243ca3587ba 1-6
+gradle.properties
+  h_60a243ca3587ba 1-6
+gradle/wrapper/gradle-wrapper.properties
+  h_60a243ca3587ba 1-7
+settings.gradle.kts
+  h_60a243ca3587ba 1-16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "866576cc430ea897ad7269a451234cc0cb66723e",
+  "prompts": {},
+  "humans": {
+    "h_60a243ca3587ba": {
+      "author": "Vinay Adiga <vinay.adiga@quabyt.com>"
+    }
+  }
+}
