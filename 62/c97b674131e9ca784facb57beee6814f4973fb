@@ -1,0 +1,19 @@
+.github/workflows/release.yml
+  s_d430575d350ffa::t_26f80241b87770 1-23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "62c97b674131e9ca784facb57beee6814f4973fb",
+  "prompts": {},
+  "sessions": {
+    "s_d430575d350ffa": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f57a0ad47ffesBRzucqW7KJ6hB",
+        "model": "unknown"
+      },
+      "human_author": "Vinay Adiga <vinay.adiga@quabyt.com>"
+    }
+  }
+}
