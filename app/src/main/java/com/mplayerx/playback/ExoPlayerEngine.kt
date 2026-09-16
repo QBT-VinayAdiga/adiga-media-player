@@ -142,7 +142,8 @@ class ExoPlayerEngine(
         trackSelector.parameters = if (id == null) {
             trackSelector.parameters.buildUpon().clearOverridesOfType(C.TRACK_TYPE_AUDIO).build()
         } else {
-            val idx = group.mediaTrackGroup.indexOf { it.id == id.toString() }.takeIf { it >= 0 } ?: return
+            val tg = group.mediaTrackGroup
+            val idx = (0 until tg.length).firstOrNull { tg.getFormat(it).id == id.toString() } ?: return
             trackSelector.parameters.buildUpon()
                 .setOverrideForType(TrackSelectionOverride(group.mediaTrackGroup, idx))
                 .build()
@@ -156,8 +157,10 @@ class ExoPlayerEngine(
         } else {
             params.setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false)
             currentTracks()?.groups?.firstOrNull { it.type == C.TRACK_TYPE_TEXT }?.let { group ->
-                val idx = group.mediaTrackGroup.indexOf { it.id == id.toString() }
-                if (idx >= 0) params.setOverrideForType(TrackSelectionOverride(group.mediaTrackGroup, idx))
+                val tg = group.mediaTrackGroup
+                (0 until tg.length).firstOrNull { tg.getFormat(it).id == id.toString() }?.let { idx ->
+                    params.setOverrideForType(TrackSelectionOverride(tg, idx))
+                }
             }
         }
         trackSelector.parameters = params.build()
