@@ -1,0 +1,40 @@
+app/src/main/java/com/mplayerx/ui/player/PlayerScreen.kt
+  s_46715e90340d44::t_27f5c478573f0c 68
+  s_46715e90340d44::t_6808a23fe916e8 518-540
+  s_46715e90340d44::t_f5eb27a7ea7605 346-361
+  s_46715e90340d44::t_76efaa12020752 307-313
+  s_46715e90340d44::t_78821a0c54856a 291-297
+  s_46715e90340d44::t_ae95074e6cfade 105
+  s_46715e90340d44::t_5090d1b7b97fae 280-282,284-286,289-290,301-306,314-318
+  s_46715e90340d44::t_2a4684022765a5 28,35-37
+  s_46715e90340d44::t_8a881836e43424 10
+app/src/main/java/com/mplayerx/playback/MpvPlayerEngine.kt
+  s_46715e90340d44::t_d52c04a673cf1d 36
+HISTORY.md
+  s_46715e90340d44::t_5a93f0cab2ec1e 5
+app/src/main/java/com/mplayerx/playback/PlayerState.kt
+  s_46715e90340d44::t_7dcb6a2bdf91b8 13-14
+app/src/main/java/com/mplayerx/playback/ExoPlayerEngine.kt
+  s_46715e90340d44::t_a0d83f4853d3d4 231-234,237
+  s_46715e90340d44::t_1005abca497821 99-106
+app/src/main/java/com/mplayerx/playback/PlayerEngine.kt
+  s_46715e90340d44::t_e46d1db7a874eb 29
+app/build.gradle.kts
+  s_46715e90340d44::t_1771a4b80eb561 16-17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "8b848f38b32ce3a055088bd1a403d39c895dd8ea",
+  "prompts": {},
+  "sessions": {
+    "s_46715e90340d44": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f570e0e97ffe8QpGPN11nFl2Vi",
+        "model": "unknown"
+      },
+      "human_author": null
+    }
+  }
+}
