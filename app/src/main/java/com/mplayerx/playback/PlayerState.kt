@@ -10,6 +10,8 @@ data class PlayerState(
     val muted: Boolean = false,
     val aspectRatio: String = "fit",
     val videoScale: Float = 1f,
+    val mirrorHorizontal: Boolean = false,
+    val repeatOne: Boolean = false,
     val audioTracks: List<TrackInfo> = emptyList(),
     val subtitleTracks: List<TrackInfo> = emptyList(),
     val subtitleDelayMs: Long = 0L,

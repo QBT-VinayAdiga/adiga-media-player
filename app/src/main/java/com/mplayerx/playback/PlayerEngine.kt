@@ -26,6 +26,7 @@ interface PlayerEngine {
     fun setAudioDelay(delayMs: Long)
     fun setVideoScale(scale: Float)
     fun setAspectRatio(ratio: String) // e.g. "fit", "fill", "16:9", "4:3"
+    fun setMirrorHorizontal(enabled: Boolean)
     fun setRepeatOne(enabled: Boolean)
     fun attachVideoSurface(surface: Any?)
     fun decoderInfo(): DecoderInfo

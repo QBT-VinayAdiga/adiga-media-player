@@ -7,6 +7,7 @@ import android.media.AudioManager
 import android.net.Uri
 import android.view.SurfaceView
 import android.view.WindowManager
+import android.widget.FrameLayout
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -24,12 +25,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Flip
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PictureInPicture
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Repeat
+import androidx.compose.material.icons.filled.RepeatOne
+import androidx.compose.material.icons.filled.ScreenRotation
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -60,6 +65,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.media3.ui.AspectRatioFrameLayout
 import com.mplayerx.MPlayerXApp
 import com.mplayerx.playback.ExoPlayerEngine
 import com.mplayerx.settings.ResumeMode
@@ -96,6 +102,7 @@ fun PlayerScreen(
     var showAspect by remember { mutableStateOf(false) }
     var showTracks by remember { mutableStateOf(false) }
     var showInfo by remember { mutableStateOf(false) }
+    var showOrientation by remember { mutableStateOf(false) }
     var resumeDialog by remember { mutableStateOf<Long?>(null) }
     var scrubFraction by remember { mutableStateOf<Float?>(null) }
     var hideJob by remember { mutableStateOf<Job?>(null) }
@@ -270,15 +277,45 @@ fun PlayerScreen(
                 }
             },
     ) {
-        // Video surface
+        // Video surface. A bare SurfaceView stretches the video to fill, which
+        // is what broke the aspect; AspectRatioFrameLayout letterboxes instead.
+        // Zoom and mirror are applied as transforms on top.
         val scale = state.videoScale
+        val videoAspect = if (state.videoWidth > 0 && state.videoHeight > 0) {
+            state.videoWidth.toFloat() / state.videoHeight
+        } else 0f
         AndroidView(
             factory = { ctx ->
-                SurfaceView(ctx).also { sv ->
+                AspectRatioFrameLayout(ctx).also { frame ->
+                    val sv = SurfaceView(ctx)
+                    frame.addView(
+                        sv,
+                        FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                        ),
+                    )
                     (controller.engine as? ExoPlayerEngine)?.attachVideoSurface(sv)
                 }
             },
-            modifier = Modifier.fillMaxSize().graphicsLayer(scaleX = scale, scaleY = scale),
+            update = { frame ->
+                frame.resizeMode = when (state.aspectRatio) {
+                    "fill" -> AspectRatioFrameLayout.RESIZE_MODE_FILL
+                    "zoom" -> AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+                    else -> AspectRatioFrameLayout.RESIZE_MODE_FIT
+                }
+                frame.setAspectRatio(
+                    when (state.aspectRatio) {
+                        "16:9" -> 16f / 9f
+                        "4:3" -> 4f / 3f
+                        else -> videoAspect // 0 until the video size is known
+                    },
+                )
+            },
+            modifier = Modifier.fillMaxSize().graphicsLayer(
+                scaleX = scale * (if (state.mirrorHorizontal) -1f else 1f),
+                scaleY = scale,
+            ),
         )
 
         if (state.isLoading) {
@@ -306,6 +343,22 @@ fun PlayerScreen(
                     state.title.ifBlank { uri.lastPathSegment ?: "Video" },
                     color = Color.White, maxLines = 1, modifier = Modifier.weight(1f),
                 )
+                val active = MaterialTheme.colorScheme.primary
+                IconButton(onClick = { showOrientation = true }) {
+                    Icon(Icons.Default.ScreenRotation, "Orientation", tint = Color.White)
+                }
+                IconButton(onClick = { controller.engine.setMirrorHorizontal(!state.mirrorHorizontal) }) {
+                    Icon(
+                        Icons.Default.Flip, "Mirror",
+                        tint = if (state.mirrorHorizontal) active else Color.White,
+                    )
+                }
+                IconButton(onClick = { controller.engine.setRepeatOne(!state.repeatOne) }) {
+                    Icon(
+                        if (state.repeatOne) Icons.Default.RepeatOne else Icons.Default.Repeat, "Loop",
+                        tint = if (state.repeatOne) active else Color.White,
+                    )
+                }
                 IconButton(onClick = { showInfo = true }) { Icon(Icons.Default.Info, null, tint = Color.White) }
                 IconButton(onClick = { onEnterPip() }) { Icon(Icons.Default.PictureInPicture, null, tint = Color.White) }
                 IconButton(onClick = { locked = true }) { Icon(Icons.Default.Lock, null, tint = Color.White) }
@@ -460,6 +513,29 @@ fun PlayerScreen(
                     }
                 },
                 confirmButton = { TextButton(onClick = { showInfo = false }) { Text("Close") } },
+            )
+        }
+        if (showOrientation) {
+            AlertDialog(
+                onDismissRequest = { showOrientation = false },
+                title = { Text("Orientation") },
+                text = {
+                    Column {
+                        listOf(
+                            "Auto" to ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED,
+                            "Landscape" to ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE,
+                            "Reverse landscape" to ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE,
+                            "Portrait" to ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT,
+                        ).forEach { (label, value) ->
+                            TextButton(onClick = {
+                                activity?.requestedOrientation = value
+                                showOrientation = false
+                                pokeControls()
+                            }) { Text(label) }
+                        }
+                    }
+                },
+                confirmButton = { TextButton(onClick = { showOrientation = false }) { Text("Close") } },
             )
         }
         resumeDialog?.let { pos ->

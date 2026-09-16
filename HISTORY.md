@@ -2,6 +2,7 @@
 
 Newest first. One line per work item: date, outcome, commit.
 
+- 2026-09-16: Player controls — correct video aspect via AspectRatioFrameLayout, orientation + mirror + loop buttons (`b2d7e51`)
 - 2026-09-16: AV1 + seeking + previews — decoder fallback + async queueing, CLOSEST_SYNC seek, idempotent open (no restart), seek-once gestures, coil-video thumbnails (`1a23975`)
 - 2026-09-16: Agent memory — `AGENTS.md` rules + this log (`da2fde9`)
 - 2026-09-16: Release `v0.1.0-mvp` with debug APK + notes; tag-triggered CI workflow (`62c97b6`)

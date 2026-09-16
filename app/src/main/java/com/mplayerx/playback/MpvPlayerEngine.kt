@@ -33,6 +33,7 @@ class MpvPlayerEngine : PlayerEngine {
     override fun setAudioDelay(delayMs: Long): Nothing = todo()
     override fun setVideoScale(scale: Float): Nothing = todo()
     override fun setAspectRatio(ratio: String): Nothing = todo()
+    override fun setMirrorHorizontal(enabled: Boolean): Nothing = todo()
     override fun setRepeatOne(enabled: Boolean): Nothing = todo()
     override fun attachVideoSurface(surface: Any?): Nothing = todo()
     override fun decoderInfo(): DecoderInfo = DecoderInfo(decoderName = "libmpv (not bundled)")

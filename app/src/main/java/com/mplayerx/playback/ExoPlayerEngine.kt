@@ -96,7 +96,14 @@ class ExoPlayerEngine(
                 _state.update { it.copy(error = error.message, isLoading = false) }
             }
             override fun onVideoSizeChanged(videoSize: VideoSize) {
-                _state.update { it.copy(videoWidth = videoSize.width, videoHeight = videoSize.height) }
+                // Rotation the decoder didn't apply changes the displayed aspect.
+                val rotated = videoSize.unappliedRotationDegrees == 90 || videoSize.unappliedRotationDegrees == 270
+                _state.update {
+                    it.copy(
+                        videoWidth = if (rotated) videoSize.height else videoSize.width,
+                        videoHeight = if (rotated) videoSize.width else videoSize.height,
+                    )
+                }
             }
             override fun onTracksChanged(tracks: Tracks) {
                 _state.update {
@@ -221,8 +228,13 @@ class ExoPlayerEngine(
         _state.update { it.copy(aspectRatio = ratio) }
     }
 
+    override fun setMirrorHorizontal(enabled: Boolean) {
+        _state.update { it.copy(mirrorHorizontal = enabled) }
+    }
+
     override fun setRepeatOne(enabled: Boolean) {
         exoPlayer.repeatMode = if (enabled) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
+        _state.update { it.copy(repeatOne = enabled) }
     }
 
     override fun attachVideoSurface(surface: Any?) {
