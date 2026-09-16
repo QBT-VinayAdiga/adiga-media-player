@@ -2,6 +2,7 @@ package com.mplayerx.ui.player
 
 import android.app.Activity
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.media.AudioManager
 import android.net.Uri
 import android.view.SurfaceView
@@ -155,6 +156,20 @@ fun PlayerScreen(
             if (state.isPlaying) it.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             else it.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
+    }
+
+    // Auto-rotate to match video aspect (toggle in Settings).
+    LaunchedEffect(state.videoWidth, state.videoHeight, settings?.autoRotate) {
+        if (settings?.autoRotate == true && state.videoWidth > 0 && state.videoHeight > 0) {
+            activity?.requestedOrientation = if (state.videoWidth >= state.videoHeight) {
+                ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+            } else {
+                ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+            }
+        }
+    }
+    DisposableEffect(Unit) {
+        onDispose { activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED }
     }
 
     val audio = remember(context) { context.getSystemService(Context.AUDIO_SERVICE) as AudioManager }

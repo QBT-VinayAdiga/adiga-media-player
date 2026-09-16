@@ -54,6 +54,7 @@ private enum class Sort { NAME, DATE, SIZE, DURATION }
 @Composable
 fun BrowserScreen(
     app: MPlayerXApp,
+    folder: String?,
     onOpenVideo: (Uri, Long) -> Unit,
     onBack: () -> Unit,
 ) {
@@ -66,9 +67,11 @@ fun BrowserScreen(
 
     LaunchedEffect(Unit) { runCatching { app.mediaRepository.refresh() } }
 
-    val filtered = remember(items, query, sort) {
-        var list = if (query.isBlank()) items
-        else items.filter { it.name.contains(query, true) || it.folder.contains(query, true) }
+    val filtered = remember(items, query, sort, folder) {
+        var list = items
+        if (folder != null) list = list.filter { it.folder == folder }
+        if (query.isNotBlank()) list =
+            list.filter { it.name.contains(query, true) || it.folder.contains(query, true) }
         list = when (sort) {
             Sort.NAME -> list.sortedBy { it.name.lowercase() }
             Sort.DATE -> list.sortedByDescending { it.dateAddedSec }
@@ -81,7 +84,7 @@ fun BrowserScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Videos (${filtered.size})") },
+                title = { Text("${folder ?: "Videos"} (${filtered.size})") },
                 navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.Default.ArrowBack, null) } },
                 actions = {
                     IconButton(onClick = { grid = !grid }) { Icon(Icons.Default.List, null) }

@@ -47,7 +47,7 @@ import com.mplayerx.utils.formatTime
 fun HomeScreen(
     app: MPlayerXApp,
     onOpenVideo: (Uri, Long) -> Unit,
-    onBrowse: () -> Unit,
+    onBrowse: (String?) -> Unit,
     onSettings: () -> Unit,
 ) {
     val items by app.mediaRepository.items.collectAsState()
@@ -61,7 +61,7 @@ fun HomeScreen(
             TopAppBar(
                 title = { Text("MPlayerX") },
                 actions = {
-                    IconButton(onClick = onBrowse) {
+                    IconButton(onClick = { onBrowse(null) }) {
                         Icon(Icons.Default.Search, contentDescription = "Browse")
                     }
                     IconButton(onClick = onSettings) {
@@ -101,13 +101,13 @@ fun HomeScreen(
             item {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text("Folders", style = MaterialTheme.typography.titleMedium)
-                    Text("See all", Modifier.clickable { onBrowse() }, color = MaterialTheme.colorScheme.primary)
+                    Text("See all", Modifier.clickable { onBrowse(null) }, color = MaterialTheme.colorScheme.primary)
                 }
                 Spacer(Modifier.height(8.dp))
                 val folders = items.groupBy { it.folder }.toList().take(8)
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     folders.forEach { (folder, vids) ->
-                        Row(Modifier.fillMaxWidth().clickable { onBrowse() }.padding(8.dp)) {
+                        Row(Modifier.fillMaxWidth().clickable { onBrowse(folder) }.padding(8.dp)) {
                             Icon(Icons.Default.Folder, contentDescription = null)
                             Spacer(Modifier.width(12.dp))
                             Text("$folder (${vids.size})")

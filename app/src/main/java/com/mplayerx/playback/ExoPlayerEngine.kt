@@ -72,7 +72,7 @@ class ExoPlayerEngine(
                 _state.update { it.copy(error = error.message, isLoading = false) }
             }
             override fun onVideoSizeChanged(videoSize: VideoSize) {
-                // resolution surfaced via decoderInfo() polling
+                _state.update { it.copy(videoWidth = videoSize.width, videoHeight = videoSize.height) }
             }
             override fun onTracksChanged(tracks: Tracks) {
                 _state.update {

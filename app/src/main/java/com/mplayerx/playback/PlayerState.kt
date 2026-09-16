@@ -17,4 +17,6 @@ data class PlayerState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val title: String = "",
+    val videoWidth: Int = 0,
+    val videoHeight: Int = 0,
 )

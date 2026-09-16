@@ -19,7 +19,7 @@ data class AppSettings(
     val defaultAspect: String = "fit",
     val seekSeconds: Int = 10,
     val backgroundAudio: Boolean = true,
-    val autoRotate: Boolean = false,
+    val autoRotate: Boolean = true,
     val subtitleSize: Float = 16f,
     val controlsTimeoutMs: Long = 3000,
 )

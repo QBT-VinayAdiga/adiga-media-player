@@ -62,13 +62,25 @@ class MainActivity : ComponentActivity() {
                             onOpenVideo = { uri, resume ->
                                 nav.navigate("player/${uri.encodeForNav()}?resume=$resume")
                             },
-                            onBrowse = { nav.navigate("browser") },
+                            onBrowse = { folder ->
+                                nav.navigate(
+                                    "browser" + (folder?.let { "?folder=${Uri.encode(it)}" } ?: "")
+                                )
+                            },
                             onSettings = { nav.navigate("settings") },
                         )
                     }
-                    composable("browser") {
+                    composable(
+                        "browser?folder={folder}",
+                        arguments = listOf(
+                            navArgument("folder") {
+                                type = NavType.StringType; nullable = true; defaultValue = null
+                            },
+                        ),
+                    ) { backStack ->
                         BrowserScreen(
                             app = app,
+                            folder = backStack.arguments?.getString("folder")?.let { Uri.decode(it) },
                             onOpenVideo = { uri, resume ->
                                 nav.navigate("player/${uri.encodeForNav()}?resume=$resume")
                             },
