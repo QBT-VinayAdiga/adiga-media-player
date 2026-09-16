@@ -1,7 +1,10 @@
 package com.mplayerx.playback
 
 import android.content.Context
+import android.media.MediaCodecInfo
+import android.media.MediaCodecList
 import android.net.Uri
+import android.os.Build
 import android.view.SurfaceView
 import android.view.TextureView
 import androidx.annotation.OptIn
@@ -13,8 +16,11 @@ import androidx.media3.common.TrackSelectionOverride
 import androidx.media3.common.Tracks
 import androidx.media3.common.VideoSize
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.SeekParameters
+import androidx.media3.exoplayer.analytics.AnalyticsListener
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -42,13 +48,31 @@ class ExoPlayerEngine(
     }
     private val renderersFactory = DefaultRenderersFactory(context).apply {
         setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER)
+        // AV1: HW decoders reject some 10-bit/4K streams at init. Fall back to
+        // the platform software AV1 decoder instead of failing the video.
+        setEnableDecoderFallback(true)
+        // AV1 60fps / high-bitrate: async queueing reduces dropped frames.
+        forceEnableMediaCodecAsynchronousQueueing()
     }
 
     val exoPlayer: ExoPlayer = ExoPlayer.Builder(context, renderersFactory)
         .setTrackSelector(trackSelector)
         .setSeekBackIncrementMs(10_000)
         .setSeekForwardIncrementMs(10_000)
+        // ponytail: AV1 GOPs are sparse, so exact seek decodes+discards many
+        // frames (the "seek stalls / restarts" symptom). Snap to the nearest
+        // keyframe. Upgrade path: SeekParameters(2_000, 2_000) for accuracy.
+        .setSeekParameters(SeekParameters.CLOSEST_SYNC)
+        // Bigger forward buffer absorbs 4K AV1 bitrate spikes.
+        .setLoadControl(
+            DefaultLoadControl.Builder()
+                .setBufferDurationsMs(30_000, 120_000, 2_500, 5_000)
+                .build()
+        )
         .build()
+
+    /** Decoder ExoPlayer actually initialized — may be software after a fallback. */
+    private var actualDecoderName: String? = null
 
     private val _state = MutableStateFlow(PlayerState())
     override val state: StateFlow<PlayerState> = _state.asStateFlow()
@@ -83,6 +107,16 @@ class ExoPlayerEngine(
                 }
             }
         })
+        exoPlayer.addAnalyticsListener(object : AnalyticsListener {
+            override fun onVideoDecoderInitialized(
+                eventTime: AnalyticsListener.EventTime,
+                decoderName: String,
+                initializedTimestampMs: Long,
+                initializationDurationMs: Long,
+            ) {
+                actualDecoderName = decoderName
+            }
+        })
         positionJob = scope.launch(Dispatchers.Main) {
             while (true) {
                 runCatching {
@@ -103,6 +137,7 @@ class ExoPlayerEngine(
 
     override fun open(uri: Uri, startPositionMs: Long) {
         currentUri = uri
+        actualDecoderName = null
         _state.update {
             it.copy(
                 isLoading = true, error = null, title = uri.lastPathSegment ?: uri.toString(),
@@ -200,26 +235,44 @@ class ExoPlayerEngine(
 
     override fun decoderInfo(): DecoderInfo {
         val format = exoPlayer.videoFormat ?: return DecoderInfo()
-        val decoder = runCatching {
-            val mc = android.media.MediaCodecList(android.media.MediaCodecList.ALL_CODECS)
-            mc.codecInfos.firstOrNull { info ->
-                runCatching {
-                    info.isEncoder.not() && info.supportedTypes.any { t ->
-                        format.sampleMimeType?.contains(t.split("/").last(), true) == true
-                    }
-                }.getOrDefault(false)
-            }?.name
-        }.getOrNull() ?: "–"
-        val hw = !decoder.contains("OMX.google", true) && !decoder.contains("c2.android", true) && decoder != "–"
+        // Prefer the decoder ExoPlayer actually opened (accounts for fallback),
+        // else the best candidate for this mime type.
+        val decoder = actualDecoderName
+            ?: codecsFor(format.sampleMimeType).firstOrNull { it.isHardware() }?.name
+            ?: codecsFor(format.sampleMimeType).firstOrNull()?.name
+            ?: "–"
+        // Never claim hardware decode when the reported decoder is software.
+        val hw = if (decoder == "–") null else isHardwareName(decoder)
         return DecoderInfo(
             videoCodec = format.sampleMimeType?.substringAfter("/")?.uppercase() ?: "–",
             resolution = if (format.width > 0) "${format.width} × ${format.height}" else "–",
             fps = format.frameRate.takeIf { it > 0 } ?: 0f,
             bitrateMbps = (format.bitrate.takeIf { it > 0 } ?: 0) / 1_000_000.0,
-            hardwareDecoding = if (decoder == "–") null else hw,
+            hardwareDecoding = hw,
             decoderName = decoder,
         )
     }
+
+    private fun codecsFor(mime: String?): List<MediaCodecInfo> {
+        if (mime == null) return emptyList()
+        return runCatching {
+            MediaCodecList(MediaCodecList.ALL_CODECS).codecInfos.filter { info ->
+                !info.isEncoder && info.supportedTypes.any { it.equals(mime, true) }
+            }
+        }.getOrDefault(emptyList())
+    }
+
+    private fun isHardwareName(name: String): Boolean {
+        val info = runCatching {
+            MediaCodecList(MediaCodecList.ALL_CODECS).codecInfos.firstOrNull { it.name == name }
+        }.getOrNull()
+        return info?.isHardware()
+            ?: (!name.startsWith("OMX.google", true) && !name.startsWith("c2.android", true))
+    }
+
+    private fun MediaCodecInfo.isHardware(): Boolean =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) isHardwareAccelerated
+        else !name.startsWith("OMX.google", true) && !name.startsWith("c2.android", true)
 
     override fun release() {
         positionJob?.cancel()

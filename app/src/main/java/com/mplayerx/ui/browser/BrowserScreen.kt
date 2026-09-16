@@ -41,10 +41,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.mplayerx.MPlayerXApp
+import com.mplayerx.ui.VideoThumbnail
 import com.mplayerx.utils.formatSize
 import com.mplayerx.utils.formatTime
 
@@ -118,10 +117,9 @@ fun BrowserScreen(
                 ) {
                     items(filtered, key = { it.id }) { v ->
                         Card(Modifier.clickable { onOpenVideo(v.uri, -1) }) {
-                            AsyncImage(
-                                model = v.uri, contentDescription = null,
+                            VideoThumbnail(
+                                uri = v.uri,
                                 modifier = Modifier.fillMaxWidth().aspectRatio(16f / 9f),
-                                contentScale = ContentScale.Crop,
                             )
                             Column(Modifier.padding(6.dp)) {
                                 Text(v.name, maxLines = 1, style = MaterialTheme.typography.labelSmall)
@@ -136,10 +134,9 @@ fun BrowserScreen(
                         Row(
                             Modifier.fillMaxWidth().clickable { onOpenVideo(v.uri, -1) }.padding(8.dp),
                         ) {
-                            AsyncImage(
-                                model = v.uri, contentDescription = null,
+                            VideoThumbnail(
+                                uri = v.uri,
                                 modifier = Modifier.weight(0.35f).aspectRatio(16f / 9f),
-                                contentScale = ContentScale.Crop,
                             )
                             Spacer(Modifier.height(0.dp))
                             Column(Modifier.weight(0.65f).padding(start = 12.dp)) {

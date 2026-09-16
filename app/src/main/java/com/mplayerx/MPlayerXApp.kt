@@ -2,6 +2,9 @@ package com.mplayerx
 
 import android.app.Application
 import android.net.Uri
+import coil.ImageLoader
+import coil.ImageLoaderFactory
+import coil.decode.VideoFrameDecoder
 import com.mplayerx.database.AppDatabase
 import com.mplayerx.database.PlaybackHistory
 import com.mplayerx.media.MediaRepository
@@ -14,7 +17,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 /** Manual DI (requirements allow lightweight manual DI instead of Hilt). */
-class MPlayerXApp : Application() {
+class MPlayerXApp : Application(), ImageLoaderFactory {
     private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     lateinit var controller: PlayerController
@@ -50,4 +53,11 @@ class MPlayerXApp : Application() {
             }
         }
     }
+
+    /** Coil: decode a video frame so every video has a real preview. */
+    override fun newImageLoader(): ImageLoader =
+        ImageLoader.Builder(this)
+            .components { add(VideoFrameDecoder.Factory()) }
+            .crossfade(true)
+            .build()
 }

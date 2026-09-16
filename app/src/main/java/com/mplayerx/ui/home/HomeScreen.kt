@@ -36,10 +36,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.mplayerx.MPlayerXApp
+import com.mplayerx.ui.VideoThumbnail
 import com.mplayerx.utils.formatTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -128,10 +127,9 @@ fun HomeScreen(
                         Card(
                             Modifier.weight(1f).clickable { onOpenVideo(v.uri, -1) },
                         ) {
-                            AsyncImage(
-                                model = v.uri, contentDescription = null,
+                            VideoThumbnail(
+                                uri = v.uri,
                                 modifier = Modifier.fillMaxWidth().aspectRatio(16f / 9f),
-                                contentScale = ContentScale.Crop,
                             )
                             Text(
                                 v.name, maxLines = 1, style = MaterialTheme.typography.labelSmall,

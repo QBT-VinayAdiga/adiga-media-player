@@ -115,6 +115,12 @@ fun PlayerScreen(
     // Open once per uri; resolve resume position.
     LaunchedEffect(uri) {
         pokeControls()
+        // Same video already in the engine (rotation, PiP, re-entry): resume it
+        // instead of re-opening, which would restart playback from frame 0.
+        if (controller.currentUri == uri) {
+            controller.open(uri)
+            return@LaunchedEffect
+        }
         if (!opened) {
             opened = true
             val saved = runCatching {
@@ -143,10 +149,6 @@ fun PlayerScreen(
         }
     }
 
-    // Persist position periodically + on dispose.
-    LaunchedEffect(state.positionMs) {
-        // light throttle: save happens in controller.saveNow on pause/dispose below
-    }
     DisposableEffect(uri) {
         onDispose { controller.saveNow(); controller.engine.pause() }
     }
@@ -226,13 +228,19 @@ fun PlayerScreen(
                 )
             }
             .pointerInput(locked) {
+                // ponytail: accumulate during the drag, seek once on release.
+                // Seeking per tick floods ExoPlayer and stalls sparse-GOP AV1.
                 detectHorizontalDragGestures(
-                    onDragEnd = { gestureDelta = 0L; pokeControls() },
+                    onDragStart = { gestureDelta = 0L },
+                    onDragEnd = {
+                        if (!locked && gestureDelta != 0L) controller.engine.seekBy(gestureDelta)
+                        gestureDelta = 0L
+                        gestureText = null
+                        pokeControls()
+                    },
                     onHorizontalDrag = { _, dx ->
                         if (!locked) {
-                            val seek = (dx / 3).toLong()
-                            controller.engine.seekBy(seek)
-                            gestureDelta += seek
+                            gestureDelta += (dx / 3).toLong()
                             gestureText = formatDelta(gestureDelta)
                         }
                     },
@@ -327,12 +335,17 @@ fun PlayerScreen(
                         value = shownFraction,
                         onValueChange = { scrubFraction = it },
                         onValueChangeFinished = {
+                            // durationMs == 0 => unknown length; seeking would send
+                            // the player to 0.0s (a restart), so ignore until known.
                             scrubFraction?.let {
-                                controller.engine.seek((it * state.durationMs).toLong())
+                                if (state.durationMs > 0) {
+                                    controller.engine.seek((it * state.durationMs).toLong())
+                                }
                             }
                             scrubFraction = null
                             pokeControls()
                         },
+                        enabled = state.durationMs > 0,
                         modifier = Modifier.weight(1f).padding(horizontal = 8.dp),
                     )
                     Text(formatTime(state.durationMs), color = Color.White)

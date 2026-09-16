@@ -16,9 +16,18 @@ class PlayerController(val engine: PlayerEngine) {
     val state: StateFlow<PlayerState> = engine.state
 
     var onPositionSave: ((uri: Uri, positionMs: Long, durationMs: Long) -> Unit)? = null
-    private var currentUri: Uri? = null
+
+    /** URI currently loaded in the engine, if any (NULL before first open). */
+    var currentUri: Uri? = null
+        private set
 
     fun open(uri: Uri, startPositionMs: Long = 0L) {
+        // Already loaded: never tear down the pipeline. Re-opening resets the
+        // media item, which is what makes a seek/re-entry look like a restart.
+        if (currentUri == uri) {
+            engine.play()
+            return
+        }
         currentUri = uri
         engine.open(uri, startPositionMs)
     }
