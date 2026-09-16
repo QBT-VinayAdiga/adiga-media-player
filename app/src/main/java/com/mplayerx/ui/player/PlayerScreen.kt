@@ -97,6 +97,7 @@ fun PlayerScreen(
     var showTracks by remember { mutableStateOf(false) }
     var showInfo by remember { mutableStateOf(false) }
     var resumeDialog by remember { mutableStateOf<Long?>(null) }
+    var scrubFraction by remember { mutableStateOf<Float?>(null) }
     var hideJob by remember { mutableStateOf<Job?>(null) }
     var opened by remember(uri) { mutableStateOf(false) }
 
@@ -191,7 +192,14 @@ fun PlayerScreen(
         Modifier.fillMaxSize().background(Color.Black)
             .pointerInput(locked, settings) {
                 detectTapGestures(
-                    onTap = { pokeControls(); if (controlsVisible) controlsVisible = false else pokeControls() },
+                    onTap = {
+                        // ponytail: plain toggle; pokeControls() first would force
+                        // visible=true and make this branch always hide.
+                        if (!locked) {
+                            controlsVisible = !controlsVisible
+                            if (controlsVisible) pokeControls() else hideJob?.cancel()
+                        }
+                    },
                     onDoubleTap = { offset ->
                         if (locked) return@detectTapGestures
                         val w = size.width
@@ -309,11 +317,21 @@ fun PlayerScreen(
                     .background(Color(0x88000000)).padding(12.dp),
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(formatTime(state.positionMs), color = Color.White)
+                    // ponytail: seek once on release. Seeking per drag tick floods
+                    // ExoPlayer and stalls AV1 (sparse keyframes, heavy decode).
+                    val liveFraction =
+                        if (state.durationMs > 0) state.positionMs.toFloat() / state.durationMs else 0f
+                    val shownFraction = scrubFraction ?: liveFraction
+                    Text(formatTime((shownFraction * state.durationMs).toLong()), color = Color.White)
                     Slider(
-                        value = if (state.durationMs > 0) state.positionMs.toFloat() / state.durationMs else 0f,
-                        onValueChange = {
-                            controller.engine.seek((it * state.durationMs).toLong())
+                        value = shownFraction,
+                        onValueChange = { scrubFraction = it },
+                        onValueChangeFinished = {
+                            scrubFraction?.let {
+                                controller.engine.seek((it * state.durationMs).toLong())
+                            }
+                            scrubFraction = null
+                            pokeControls()
                         },
                         modifier = Modifier.weight(1f).padding(horizontal = 8.dp),
                     )

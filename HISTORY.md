@@ -10,3 +10,4 @@ Newest first. One line per work item: date, outcome, commit.
 - 2026-09-16: MVP implemented — Compose UI, Media3 engine behind `PlayerEngine`, gestures, resume, PiP (`866576c`)
 - 2026-09-16: Toolchain — Android SDK `D:\android-sdk`, Gradle 8.10.2, `ARCHITECTURE`/`DEVELOPMENT`/`TODO.md`
 - 2026-09-16: Folder drill-down (home folders open their videos) + auto-rotate from video aspect, on by default (805f02f)
+- 2026-09-16: Tap toggles controls; seekbar seeks on release, fixes AV1 scrub stall (6266382)
