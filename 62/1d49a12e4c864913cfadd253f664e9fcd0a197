@@ -1,0 +1,21 @@
+README.md
+  s_d430575d350ffa::t_b0ba5d82d15e9d 1-92
+DEVELOPMENT.md
+  s_d430575d350ffa::t_e94015a92e6c79 7,11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "621d49a12e4c864913cfadd253f664e9fcd0a197",
+  "prompts": {},
+  "sessions": {
+    "s_d430575d350ffa": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f57a0ad47ffesBRzucqW7KJ6hB",
+        "model": "unknown"
+      },
+      "human_author": "Vinay Adiga <vinay.adiga@quabyt.com>"
+    }
+  }
+}
