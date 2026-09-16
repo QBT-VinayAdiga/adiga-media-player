@@ -1,0 +1,19 @@
+HISTORY.md
+  s_d430575d350ffa::t_6dd2cd0f397e55 15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "6b092b458a652df75d1fcdcc21102754effdefd4",
+  "prompts": {},
+  "sessions": {
+    "s_d430575d350ffa": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f57a0ad47ffesBRzucqW7KJ6hB",
+        "model": "unknown"
+      },
+      "human_author": "Vinay Adiga <vinay.adiga@quabyt.com>"
+    }
+  }
+}
