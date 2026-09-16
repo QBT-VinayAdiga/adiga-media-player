@@ -1,0 +1,20 @@
+app/src/main/java/com/mplayerx/playback/ExoPlayerEngine.kt
+  s_d430575d350ffa::t_7096fee8d5b36f 145-146
+  s_d430575d350ffa::t_01693e70f94471 160-163
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "b7a57403b39b012982798e32848bf207f7150556",
+  "prompts": {},
+  "sessions": {
+    "s_d430575d350ffa": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f57a0ad47ffesBRzucqW7KJ6hB",
+        "model": "unknown"
+      },
+      "human_author": "Vinay Adiga <vinay.adiga@quabyt.com>"
+    }
+  }
+}
