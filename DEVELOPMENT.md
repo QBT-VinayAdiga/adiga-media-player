@@ -4,11 +4,11 @@
 - JDK 17+ (`java -version`)
 - Android SDK at `D:\android-sdk` (platforms;android-34, build-tools;34.0.0)
   or set `sdk.dir` in `local.properties`
-- Gradle 8.10+ (`D:\gradle\bin\gradle` on this machine)
+- Gradle 8.10+ (`D:\gradle-8.10.2\bin\gradle.bat` on this machine)
 
 ## Build debug APK
 ```
-D:\gradle\bin\gradle.bat :app:assembleDebug
+D:\gradle-8.10.2\bin\gradle.bat :app:assembleDebug
 REM → app\build\outputs\apk\debug\app-debug.apk
 ```
 
