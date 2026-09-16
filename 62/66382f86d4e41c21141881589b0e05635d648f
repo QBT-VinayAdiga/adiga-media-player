@@ -1,0 +1,21 @@
+app/src/main/java/com/mplayerx/ui/player/PlayerScreen.kt
+  s_d430575d350ffa::t_7f86c0b45aa40f 320-325,327-334
+  s_d430575d350ffa::t_7e0ebb2911d42e 100
+  s_d430575d350ffa::t_43060e5dd85959 195-202
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "6266382f86d4e41c21141881589b0e05635d648f",
+  "prompts": {},
+  "sessions": {
+    "s_d430575d350ffa": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f57a0ad47ffesBRzucqW7KJ6hB",
+        "model": "unknown"
+      },
+      "human_author": "Vinay Adiga <vinay.adiga@quabyt.com>"
+    }
+  }
+}
